@@ -1,14 +1,15 @@
 // src/types/budget.types.ts
+
 export interface Budget {
-  id: string;
-  userId: string;
+  id: number;
+  userId: number;
   category: string;
-  amount: number;
+  limit: number;
   spent: number;
   month: number;
   year: number;
   alertsEnabled: boolean;
-  alertThreshold: number; // percentage (e.g., 80 for 80%)
+  alertThreshold: number;
   notes?: string;
   createdAt: string;
   updatedAt: string;
@@ -16,11 +17,12 @@ export interface Budget {
 
 export interface BudgetRequest {
   category: string;
-  amount: number;
+  limit: number;
   month: number;
   year: number;
   alertsEnabled?: boolean;
   alertThreshold?: number;
+  notes?: string;
 }
 
 export interface BudgetPerformance {
@@ -29,16 +31,13 @@ export interface BudgetPerformance {
   remaining: number;
   percentageUsed: number;
   status: "good" | "warning" | "critical" | "exceeded";
-  projectedSpending: number;
   dailyAverage: number;
   daysRemaining: number;
   recommendedDailyLimit: number;
 }
 
 export interface BudgetAlert {
-  id: string;
-  userId: string;
-  budgetId: string;
+  id: number;
   category: string;
   message: string;
   severity: "info" | "warning" | "critical";
