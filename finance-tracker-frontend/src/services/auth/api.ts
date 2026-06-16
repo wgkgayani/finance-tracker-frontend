@@ -1,4 +1,4 @@
-// src/lib/api/axios.config.ts
+// src/services/auth/api.ts
 
 import axios from "axios";
 
@@ -10,9 +10,10 @@ const api = axios.create({
   timeout: 30000,
 });
 
-// Request interceptor
+// Request interceptor - adds token to every request
 api.interceptors.request.use(
   (config) => {
+    // Only run on client side
     if (typeof window !== "undefined") {
       const token = localStorage.getItem("token");
       if (token) {
@@ -21,13 +22,16 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error),
+  (error) => {
+    return Promise.reject(error);
+  },
 );
 
-// Response interceptor
+// Response interceptor - handles auth errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Handle 401 Unauthorized
     if (error.response?.status === 401) {
       if (typeof window !== "undefined") {
         localStorage.removeItem("token");
