@@ -1,7 +1,8 @@
 // src/types/savings.types.ts
+
 export interface SavingsGoal {
-  id: string;
-  userId: string;
+  id: number;
+  userId: number;
   name: string;
   targetAmount: number;
   currentAmount: number;
@@ -12,6 +13,7 @@ export interface SavingsGoal {
   automaticSaving?: boolean;
   monthlyContribution?: number;
   status: "active" | "completed" | "archived";
+  progress: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -22,6 +24,8 @@ export interface SavingsGoalRequest {
   deadline: string;
   category?: string;
   priority?: "low" | "medium" | "high";
+  notes?: string;
+  automaticSaving?: boolean;
   monthlyContribution?: number;
 }
 
@@ -33,4 +37,15 @@ export interface SavingsProgress {
   monthlyRecommended: number;
   onTrack: boolean;
   projectedCompletionDate: string;
+  dailyRecommended: number;
+}
+
+export interface SavingsSummary {
+  totalGoals: number;
+  activeGoals: number;
+  completedGoals: number;
+  totalTargetAmount: number;
+  totalSavedAmount: number;
+  overallProgress: number;
+  nearestDeadline: string;
 }
