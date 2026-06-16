@@ -1,6 +1,10 @@
+// src/components/dashboard/BudgetProgress.tsx
+
 "use client";
 
-import Link from "next/link";
+import React from "react";
+import { motion } from "framer-motion";
+import { Wallet, TrendingUp } from "lucide-react";
 
 interface Budget {
   category: string;
@@ -13,61 +17,75 @@ interface BudgetProgressProps {
   budgets?: Budget[];
 }
 
-function getProgressColor(percentage: number) {
-  if (percentage >= 90) return "bg-danger-500";
-  if (percentage >= 75) return "bg-warning-500";
-  return "bg-primary-500";
-}
-
 export default function BudgetProgress({ budgets = [] }: BudgetProgressProps) {
+  if (!budgets || budgets.length === 0) {
+    return (
+      <div className="bg-white rounded-lg shadow p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Budget Progress
+        </h3>
+        <div className="flex items-center justify-center h-32">
+          <p className="text-gray-500">No budgets set</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+    <div className="bg-white rounded-lg shadow p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-900">Budget Progress</h3>
-        <Link
-          href="/budgets"
-          className="text-sm text-primary-600 hover:text-primary-700 font-medium"
-        >
-          Manage
-        </Link>
+        <Wallet className="w-5 h-5 text-gray-400" />
       </div>
 
-      {budgets.length === 0 ? (
-        <p className="text-sm text-gray-500 text-center py-8">
-          No budgets set up yet
-        </p>
-      ) : (
-        <div className="space-y-4">
-          {budgets.map((budget) => {
-            const percentage = Math.min(
-              Math.round((budget.spent / budget.limit) * 100),
-              100,
-            );
+      <div className="space-y-4">
+        {budgets.map((budget, index) => {
+          const percentage = (budget.spent / budget.limit) * 100;
+          const isOverBudget = percentage >= 100;
+          const isWarning = percentage >= 80 && !isOverBudget;
 
-            return (
-              <div key={budget.category}>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium text-gray-700">
-                    {budget.category}
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    ${budget.spent} / ${budget.limit}
-                  </span>
-                </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all duration-500 ${getProgressColor(percentage)}`}
-                    style={{ width: `${percentage}%` }}
-                  />
-                </div>
-                <p className="text-xs text-gray-400 mt-1">
-                  ${budget.remaining} remaining
-                </p>
+          return (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <div className="flex justify-between text-sm mb-1">
+                <span className="font-medium text-gray-700">
+                  {budget.category}
+                </span>
+                <span className="text-gray-600">
+                  ${budget.spent.toLocaleString()} / $
+                  {budget.limit.toLocaleString()}
+                </span>
               </div>
-            );
-          })}
-        </div>
-      )}
+              <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                <div
+                  className={`h-2.5 rounded-full transition-all duration-500 ${
+                    isOverBudget
+                      ? "bg-red-500"
+                      : isWarning
+                        ? "bg-yellow-500"
+                        : "bg-green-500"
+                  }`}
+                  style={{ width: `${Math.min(percentage, 100)}%` }}
+                />
+              </div>
+              <div className="flex justify-between mt-1">
+                <span className="text-xs text-gray-400">
+                  {isOverBudget
+                    ? "Over budget"
+                    : `${Math.round(percentage)}% used`}
+                </span>
+                <span className="text-xs text-gray-400">
+                  ${budget.remaining.toLocaleString()} remaining
+                </span>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
     </div>
   );
 }
