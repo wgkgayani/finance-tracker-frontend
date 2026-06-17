@@ -5,15 +5,15 @@
 import React from "react";
 import { motion } from "framer-motion";
 import {
-  MailIcon,
-  PhoneIcon,
-  MapPinIcon,
-  GlobeIcon,
-  BriefcaseIcon,
-  BuildingIcon,
-  CalendarIcon,
-  EditIcon,
-} from "lucide-react";
+  Mail,
+  Phone,
+  MapPin,
+  Globe,
+  Briefcase,
+  Building,
+  Calendar,
+  Edit,
+} from "lucide-react"; // ✅ Changed all icons to lucide-react standard names
 import { UserProfile } from "@/types/profile.types";
 import { format } from "date-fns";
 
@@ -24,26 +24,18 @@ interface ProfileInfoProps {
 
 export default function ProfileInfo({ profile, onEdit }: ProfileInfoProps) {
   const infoItems = [
-    { icon: MailIcon, label: "Email", value: profile.email },
-    { icon: PhoneIcon, label: "Phone", value: profile.phone || "Not set" },
+    { icon: Mail, label: "Email", value: profile.email },
+    { icon: Phone, label: "Phone", value: profile.phone || "Not set" },
+    { icon: MapPin, label: "Location", value: profile.location || "Not set" },
+    { icon: Globe, label: "Website", value: profile.website || "Not set" },
     {
-      icon: MapPinIcon,
-      label: "Location",
-      value: profile.location || "Not set",
-    },
-    { icon: GlobeIcon, label: "Website", value: profile.website || "Not set" },
-    {
-      icon: BriefcaseIcon,
+      icon: Briefcase,
       label: "Job Title",
       value: profile.jobTitle || "Not set",
     },
+    { icon: Building, label: "Company", value: profile.company || "Not set" },
     {
-      icon: BuildingIcon,
-      label: "Company",
-      value: profile.company || "Not set",
-    },
-    {
-      icon: CalendarIcon,
+      icon: Calendar,
       label: "Member Since",
       value: format(new Date(profile.createdAt), "MMM dd, yyyy"),
     },
@@ -64,7 +56,7 @@ export default function ProfileInfo({ profile, onEdit }: ProfileInfoProps) {
           onClick={onEdit}
           className="inline-flex items-center px-3 py-2 text-sm font-medium text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors"
         >
-          <EditIcon className="w-4 h-4 mr-2" />
+          <Edit className="w-4 h-4 mr-2" />
           Edit Profile
         </button>
       </div>
