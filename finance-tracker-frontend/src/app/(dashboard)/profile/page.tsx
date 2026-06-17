@@ -4,7 +4,13 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { UserIcon, LockIcon, SettingsIcon, RefreshCwIcon } from "lucide-react";
+import {
+  User, // ✅ Changed from UserIcon
+  Lock, // ✅ Changed from LockIcon
+  Settings, // ✅ Changed from SettingsIcon
+  RefreshCw, // ✅ Changed from RefreshCwIcon
+  Shield, // ✅ Added Shield import
+} from "lucide-react";
 import { profileService } from "@/services/profile/profile.service";
 import { UserProfile } from "@/types/profile.types";
 import ProfileAvatar from "@/components/profile/ProfileAvatar";
@@ -59,9 +65,9 @@ export default function ProfilePage() {
   if (!profile) return <div>Profile not found</div>;
 
   const tabs = [
-    { id: "profile", label: "Profile", icon: UserIcon },
-    { id: "settings", label: "Settings", icon: SettingsIcon },
-    { id: "security", label: "Security", icon: LockIcon },
+    { id: "profile", label: "Profile", icon: User },
+    { id: "settings", label: "Settings", icon: Settings },
+    { id: "security", label: "Security", icon: Lock },
   ];
 
   return (
@@ -78,7 +84,7 @@ export default function ProfilePage() {
           onClick={fetchProfile}
           className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
         >
-          <RefreshCwIcon className="w-4 h-4 mr-2" />
+          <RefreshCw className="w-4 h-4 mr-2" />
           Refresh
         </button>
       </div>
@@ -166,7 +172,7 @@ export default function ProfilePage() {
                   className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <LockIcon className="w-5 h-5 text-gray-500" />
+                    <Lock className="w-5 h-5 text-gray-500" />
                     <div className="text-left">
                       <p className="font-medium text-gray-900">
                         Change Password
@@ -182,7 +188,8 @@ export default function ProfilePage() {
                 <div className="p-4 bg-gray-50 rounded-lg">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <ShieldIcon className="w-5 h-5 text-gray-500" />
+                      <Shield className="w-5 h-5 text-gray-500" />{" "}
+                      {/* ✅ Fixed: ShieldIcon → Shield */}
                       <div>
                         <p className="font-medium text-gray-900">
                           Two-Factor Authentication
