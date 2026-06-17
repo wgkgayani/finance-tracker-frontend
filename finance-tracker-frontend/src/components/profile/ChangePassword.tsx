@@ -4,7 +4,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { XIcon, LockIcon, EyeIcon, EyeOffIcon } from "lucide-react"; // ✅ Changed EyeSlashIcon to EyeOffIcon
+import { X, Lock, Eye, EyeOff } from "lucide-react"; // ✅ Fixed imports
 import { profileService } from "@/services/profile/profile.service";
 import toast from "react-hot-toast";
 
@@ -97,7 +97,7 @@ export default function ChangePassword({
               <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center gap-2">
                   <div className="p-2 bg-primary-100 rounded-lg">
-                    <LockIcon className="w-5 h-5 text-primary-600" />
+                    <Lock className="w-5 h-5 text-primary-600" />
                   </div>
                   <h3 className="text-lg font-medium leading-6 text-gray-900">
                     Change Password
@@ -107,7 +107,7 @@ export default function ChangePassword({
                   onClick={onClose}
                   className="text-gray-400 hover:text-gray-500"
                 >
-                  <XIcon className="w-5 h-5" />
+                  <X className="w-5 h-5" />
                 </button>
               </div>
 
@@ -139,9 +139,9 @@ export default function ChangePassword({
                       className="absolute inset-y-0 right-0 pr-3 flex items-center"
                     >
                       {showPasswords.current ? (
-                        <EyeOffIcon className="h-4 w-4 text-gray-400" /> // ✅ Changed to EyeOffIcon
+                        <EyeOff className="h-4 w-4 text-gray-400" />
                       ) : (
-                        <EyeIcon className="h-4 w-4 text-gray-400" />
+                        <Eye className="h-4 w-4 text-gray-400" />
                       )}
                     </button>
                   </div>
@@ -179,9 +179,9 @@ export default function ChangePassword({
                       className="absolute inset-y-0 right-0 pr-3 flex items-center"
                     >
                       {showPasswords.new ? (
-                        <EyeOffIcon className="h-4 w-4 text-gray-400" /> // ✅ Changed to EyeOffIcon
+                        <EyeOff className="h-4 w-4 text-gray-400" />
                       ) : (
-                        <EyeIcon className="h-4 w-4 text-gray-400" />
+                        <Eye className="h-4 w-4 text-gray-400" />
                       )}
                     </button>
                   </div>
@@ -222,9 +222,9 @@ export default function ChangePassword({
                       className="absolute inset-y-0 right-0 pr-3 flex items-center"
                     >
                       {showPasswords.confirm ? (
-                        <EyeOffIcon className="h-4 w-4 text-gray-400" /> // ✅ Changed to EyeOffIcon
+                        <EyeOff className="h-4 w-4 text-gray-400" />
                       ) : (
-                        <EyeIcon className="h-4 w-4 text-gray-400" />
+                        <Eye className="h-4 w-4 text-gray-400" />
                       )}
                     </button>
                   </div>
