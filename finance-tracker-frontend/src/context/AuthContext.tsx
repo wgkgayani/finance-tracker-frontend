@@ -1,4 +1,5 @@
 // src/context/AuthContext.tsx
+
 "use client";
 
 import React, {
@@ -9,13 +10,7 @@ import React, {
   useCallback,
 } from "react";
 import { useRouter } from "next/navigation";
-import {
-  AuthContextType,
-  User,
-  RegisterRequest,
-  ForgotPasswordRequest,
-  ResetPasswordRequest,
-} from "@/types/user.types";
+import { AuthContextType, User, RegisterRequest } from "@/types/user.types";
 import { authService } from "@/services/auth/auth.service";
 import toast from "react-hot-toast";
 
@@ -34,40 +29,64 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  const checkAuth = useCallback(async () => {
-    const token = localStorage.getItem("token");
-    const savedUser = localStorage.getItem("user");
+  // ✅ FIXED: Properly check auth on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const savedUser = localStorage.getItem("user");
 
-    if (token && savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-    setIsLoading(false);
+        console.log("Auth check - token:", token ? "exists" : "none");
+        console.log("Auth check - savedUser:", savedUser ? "exists" : "none");
+
+        if (token && savedUser) {
+          try {
+            const parsedUser = JSON.parse(savedUser);
+            setUser(parsedUser);
+            console.log("User set from localStorage:", parsedUser);
+          } catch (parseError) {
+            console.error("Error parsing user from localStorage:", parseError);
+            localStorage.removeItem("user");
+            localStorage.removeItem("token");
+          }
+        } else {
+          console.log("No auth data found");
+          setUser(null);
+        }
+      } catch (error) {
+        console.error("Auth check error:", error);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
   }, []);
 
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
-
-  const login = async (
-    email: string,
-    password: string,
-    rememberMe: boolean = false,
-  ) => {
+  const login = async (email: string, password: string) => {
     try {
       setIsLoading(true);
-      const response = await authService.login({ email, password, rememberMe });
+      console.log("Attempting login with:", email);
 
-      localStorage.setItem("token", response.token);
-      if (rememberMe) {
-        localStorage.setItem("refreshToken", response.refreshToken);
+      const response = await authService.login({ email, password });
+      console.log("Login response:", response);
+
+      if (!response || !response.token || !response.user) {
+        throw new Error("Invalid login response");
       }
+
+      // ✅ Store both token and user
+      localStorage.setItem("token", response.token);
       localStorage.setItem("user", JSON.stringify(response.user));
+
       setUser(response.user);
 
-      toast.success("Welcome back!");
+      toast.success("Login successful!");
       router.push("/dashboard");
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Login failed");
+      console.error("Login error:", error);
+      toast.error(error.message || "Login failed");
       throw error;
     } finally {
       setIsLoading(false);
@@ -83,52 +102,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       localStorage.setItem("user", JSON.stringify(response.user));
       setUser(response.user);
 
-      toast.success("Account created successfully!");
-      router.push("/onboarding");
+      toast.success("Registration successful!");
+      router.push("/dashboard");
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Registration failed");
+      toast.error(error.message || "Registration failed");
       throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const forgotPassword = async (data: ForgotPasswordRequest) => {
-    try {
-      await authService.forgotPassword(data);
-      toast.success("Password reset link sent to your email");
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to send reset link");
-      throw error;
-    }
-  };
-
-  const resetPassword = async (data: ResetPasswordRequest) => {
-    try {
-      await authService.resetPassword(data);
-      toast.success("Password reset successfully");
-      router.push("/login");
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to reset password");
-      throw error;
-    }
-  };
-
-  const updateProfile = async (data: Partial<User>) => {
-    try {
-      const updatedUser = await authService.updateProfile(data);
-      setUser(updatedUser);
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      toast.success("Profile updated successfully");
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to update profile");
-      throw error;
-    }
-  };
-
   const logout = useCallback(() => {
+    console.log("Logging out...");
     localStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
     setUser(null);
     toast.success("Logged out successfully");
@@ -143,9 +129,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         login,
         register,
         logout,
-        forgotPassword,
-        resetPassword,
-        updateProfile,
         isAuthenticated: !!user,
       }}
     >
